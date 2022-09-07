@@ -27,10 +27,10 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 public class ManejoArchivos {
 
     JavaParserBaseListener Oparser = new JavaParserBaseListener();
-    ArrayList<Clase> listaClases = new ArrayList<Clase>();
+    public ArrayList<Clase> listaClases = new ArrayList<Clase>();
     ArrayList<File> archivosJava = new ArrayList<>();
 
-    void seleccionar_archivos() {
+    public void seleccionar_archivos() {
         List<File> listaDeArchivos = new ArrayList<>();
         Scanner entrada = null;
         //Se crea el JFileChooser. Se le indica que la ventana se abra en el directorio actual

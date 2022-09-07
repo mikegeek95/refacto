@@ -205,6 +205,7 @@ public class Refactorizar {
 		String varnew;
 		String copyvar=variable;
 		String estatic="";
+		String [] pats;
 		ArrayList<String> variablesnew= new ArrayList<String>();
 		
 		variable=obtenernombre(variable);
@@ -233,6 +234,7 @@ public class Refactorizar {
 						}
 					}
 				}else {
+				
 					if(buscarPalabra("static",var)) {
 						estatic="static ";
 					}
@@ -261,6 +263,9 @@ public class Refactorizar {
 						variablesnew.add(varnew);
 					}
 				}
+						
+	
+				
 			}
 			else {
 				variablesnew.add(var);
@@ -304,18 +309,38 @@ public class Refactorizar {
     }
 	
 	private boolean buscarPalabra (String palabra, String frase) {
-		boolean encontrado=frase.contains(palabra);
+		boolean encontrado=false;
+		String[] palabras;
+		if(frase.contains(palabra)) {
+			palabras = frase.split("\\W+");
+			for(String palb:palabras) {
+				if(palb.equals(palabra)) {
+					encontrado=true;
+				}
+			}
+		}
 		return  encontrado;
 	}
 
-	private Clase moverLocal(Clase cA, String var, String tipo) {
+	private Clase moverLocal(Clase cA, String variable, String tipo) {
+		System.out.println("moviendo a metodo local");
 		String metodo="";
+		String [] lineas;
+		String nuevocuerpo="";
+		String copyvar=variable;
+		String varnew;
+		ArrayList<String> variablesnew= new ArrayList<String>();
+		String[] subsvar;
+		int cl;
+		
+		variable=obtenernombre(variable);
+		
 		for(Metodo met: cA.getMetodos()) {
 			if(!met.getAbstracto()) {
 				String[] partc=met.getCuerpo().split("\n");
 				for(int x=0;x<partc.length;x++) {
 					if(reglas(partc[x])) {
-						if(buscarPalabra(var,partc[x])) {
+						if(buscarPalabra(variable,partc[x])) {
 							metodo=met.getNombre();
 						}
 					}
@@ -323,10 +348,50 @@ public class Refactorizar {
 			}
 		}
 		
-		if(!metodo.equals("")) {
-			
+		if(!metodo.equals("") && buscarPalabra("new",copyvar)) {
+			for(Metodo met : cA.getMetodos()) {
+				if (met.getNombre().equals(metodo)) {
+					lineas=met.getCuerpo().split("\n");
+					
+					for(cl=0;cl<lineas.length;cl++) {
+						if(buscarPalabra("{",lineas[cl]) && (cl==0 || cl==1)) {
+							nuevocuerpo=nuevocuerpo+lineas[cl]+"\n"+tipo+" "+copyvar+";"+"\n";
+							System.out.println("***movido al metodo "+metodo);
+						}
+						else {
+							nuevocuerpo=nuevocuerpo+lineas[cl]+"\n";
+						}
+					}
+					met.setCuerpo(nuevocuerpo);
+				}
+				
+				
+			}
+			//inicia eliminacion
+			for(String var:cA.getVariables()) { 
+				if(buscarPalabra(variable,var)) {
+						subsvar=var.split(",");
+						if(subsvar.length==1) {
+						System.out.println("solo hay 1 se elimna");
+					}else {
+						varnew=var.replace(copyvar,"");
+						System.out.println(" hay mas de 1 se remplaza");
+						if (buscarPalabra(",,",varnew)) {
+							varnew=varnew.replace(",,", ",");
+							System.out.println("se corrige");
+						}
+						variablesnew.add(varnew);		
+
+				}
+				
+				}else{
+					variablesnew.add(var);
+				}
+			}
+			//termian eliminacion
+			cA.setVariables(variablesnew);
 		}else {
-			System.out.println("--se recomienda eliminar la variable "+var+" de la clase "+cA.getNombre());
+			System.out.println("--se recomienda eliminar la variable "+variable+" de la clase "+cA.getNombre());
 		}
 		
 		return cA;

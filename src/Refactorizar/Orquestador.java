@@ -14,7 +14,6 @@ public class Orquestador {
     	  GenerarCodigoRefactorizado gCodigoR = new GenerarCodigoRefactorizado();
     	  OclasesDerivadas rm2 = new OclasesDerivadas(); 
     	  ArrayList<Clase> listaC = new ArrayList<>();
-    	  ArrayList<Clase> listCE = new ArrayList<>();
     	  Refactorizar oR = new Refactorizar();
     	    
     	    
