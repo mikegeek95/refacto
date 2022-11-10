@@ -1,8 +1,8 @@
-package <paquete>;
+<if(clase.paquete)>package  <clase.paquete>;<endif>
 
 <clase.importaciones :{ imp | <imp><\n>}>
 
-  public <if(clase.abstracta)>abstract class <endif><if(clase.esInterfaz)>interface <endif><if(!clase.abstracta && !clase.esInterfaz )>class <endif><clase.nombre><clase.parametros><if(clase.heredaDeClase)> extends <clase.clasePadre><endif> {  
+  public <if(clase.abstracta)>abstract class <endif><if(clase.esInterfaz)>interface <endif><if(!clase.abstracta && !clase.esInterfaz )>class <endif><clase.nombre><clase.parametros><if(clase.heredaDeClase)> extends <clase.clasePadre><endif><if(clase.ImplementaDeClase)> implements <clase.ClaseImplementada><endif> {  
 
    <clase.variables :{ atributo | <atributo>;}; separator="\n">
 

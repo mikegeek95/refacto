@@ -315,9 +315,7 @@ public class JavaParserBaseListener implements JavaParserListener {
                 String v = var.substring(0, var.length() - 2);
                 varRes.add(v);
             }
-            if(!oClase.getClasePadre().equals("")){
-                oClase.setHeredaDeClase(true);
-            }
+           
             obtenerVariablesClase(variablesAux);
             oClase.setMetodos(listaMetodo);
             oClase.setMetodos2(mapMetodos2);
@@ -334,36 +332,47 @@ public class JavaParserBaseListener implements JavaParserListener {
        private void obtenerVariablesClase(ArrayList<String> listaVar) {
               
            for (String variable : listaVar) {
-               ArrayList<String> listVariablesClase = new ArrayList<>();
-               boolean buscarEnlista = false;
                 variable = variable.replaceAll(";","").trim();
-                String[] parts = variable.split(" ");
-                String tipo = parts[parts.length - 2];
-                String var = parts[parts.length - 1];
-                if(var.contains(",")){
-                    buscarEnlista = true;
-                   String[] varC = var.split(","); 
-                    for (int i = 0; i < varC.length; i++) {
-                        listVariablesClase.add(varC[i]);
-                    }
+               // System.out.println(" variable map "+variable);
+                
+                if(variable.split(",").length==1) {
+                	
+                	if(variable.contains("=")) {
+                		String[] partes=variable.split("=");
+                		String[] comps=partes[0].split(" ");
+                		partes[1]=partes[1].replace("new", "new ");
+                		mapVar.put(comps[comps.length-1]+"="+partes[1], comps[comps.length-2]);
+                		
+                	}
+                	else {
+                		String[] comps=variable.split(" ");
+                		mapVar.put(comps[comps.length-1], comps[comps.length-2]);
+                	}
+                	
+                }
+                else {
+                	if(variable.contains("=")) {
+                		String[] partes=variable.split("=");
+                		String[] comps=partes[0].split(",");
+                		String[] subcomps=comps[0].split(" ");
+                		partes[1]=partes[1].replace("new", "new ");
+                		mapVar.put(subcomps[subcomps.length-1]+"="+partes[1], subcomps[subcomps.length-2]);
+                		for (int i = 1; i < comps.length; i++) {
+                			mapVar.put(comps[i]+"="+partes[1], subcomps[subcomps.length-2]);
+                        }
+                		
+                	}
+                	else {
+                		String[] comps=variable.split(",");
+                		String[] subcomps=comps[0].split(" ");
+                		mapVar.put(subcomps[subcomps.length-1], subcomps[subcomps.length-2]);
+                		for (int i = 1; i < comps.length; i++) {
+                			mapVar.put(comps[i], subcomps[subcomps.length-2]);
+                        }
+                	}
                 }
                 
-                if (!buscarEnlista) {
-                   if (!mapVar.containsKey(var)) {
-                       mapVar.put(var, tipo);
-//                       System.err.println("la varible" + var + "no se encuentra");
-                   }
-               } else if (buscarEnlista) {
-                  
-                    for (String v : listVariablesClase) {
-                        v = v.trim();
-                        if (!mapVar.containsKey(v)) {
-                            mapVar.put(v, tipo);
-                        }
-//                        System.out.println(v);
-                    }
-
-               }
+                
         }
 
     }
@@ -384,15 +393,16 @@ public class JavaParserBaseListener implements JavaParserListener {
 	 */
 	@Override public void exitClassBody(JavaParser.ClassBodyContext ctx) { 
             ArrayList<String> varRes = new ArrayList<>();
-
+            String varant="";
             uniVariables();
             for (String var : variables) {
                 String v = var.substring(0, var.length() - 2);
+                if(!varant.equals(v)) {
                 varRes.add(v);
+                }
+                varant=v;
             }
-            if(!oClase.getClasePadre().equals("")){
-                oClase.setHeredaDeClase(true);
-            }
+            
             obtenerVariablesClase(variablesAux);
             oClase.setMetodos(listaMetodo);
             oClase.setMetodos2(mapMetodos2);
@@ -405,6 +415,8 @@ public class JavaParserBaseListener implements JavaParserListener {
             variablesAux = new ArrayList<>();
             listaClases.add(oClase);
         }
+
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1065,9 +1077,13 @@ public class JavaParserBaseListener implements JavaParserListener {
             String var = ctx.getText();
             int bo = ctx.getChildCount();
             if (ctx.getParent().getParent() instanceof JavaParser.ClassDeclarationContext) {
-                 oClase.setClasePadre(var);
-//                probando si no funciona descomentar la linea  de abajo
-//                oClase.setClasePadre(ctx.IDENTIFIER(0).getText());
+                oClase.setClasePadre(var);
+                oClase.setHeredaDeClase(true);
+
+           }
+            if (ctx.getParent().getParent().getParent() instanceof JavaParser.ClassDeclarationContext) {
+                 oClase.setClaseImplementada(var);
+                 oClase.setImplementaDeClase(true);
             }
          }
 	/**

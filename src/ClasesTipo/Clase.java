@@ -6,7 +6,8 @@ import java.util.Map;
 
 public class Clase {
 
-    private String nombre;
+    private boolean refact=false;
+	private String nombre;
     private String calificador;
     private String paquete;
     public ArrayList<Metodo> metodos;
@@ -17,6 +18,8 @@ public class Clase {
     private boolean abstracta;
     private boolean esInterfaz;
     private boolean heredaDeClase;
+    private boolean ImplementaDeClase;
+    private String ClaseImplementada;
     public Map <String,ArrayList<Clase>> familia;
     public boolean refactorizada;
     private String parametros;
@@ -45,6 +48,14 @@ public class Clase {
 
     }
 
+    public void setrefact(boolean valorrefact) {
+    	refact = valorrefact;
+    }
+
+    public boolean getRefact() {
+        return refact;
+    }
+    
     public void setNombre(String valornombre) {
         nombre = valornombre;
     }
@@ -178,5 +189,23 @@ public class Clase {
     public Map<String,Clase> getFam_Mapa() {
         return fam_mapa;
     }
+
+	public void setClaseImplementada(String ClaseImplementada) {
+		this.ClaseImplementada=ClaseImplementada;
+		
+	}
+	
+	public String getClaseImplementada() {
+		return ClaseImplementada;
+	}
+
+	public void setImplementaDeClase(boolean ImplementaDeClase) {
+		this.ImplementaDeClase=ImplementaDeClase;
+		
+	}
+	
+	public boolean getImplementaDeClase() {
+		return ImplementaDeClase;
+	}
     
 }

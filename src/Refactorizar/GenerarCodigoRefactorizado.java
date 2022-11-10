@@ -6,6 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STRawGroupDir;
@@ -23,7 +26,8 @@ public class GenerarCodigoRefactorizado {
             ST st = g.getInstanceOf("plantilla");
             st.add("paquete",clase.getPaquete());
             st.add("clase",clase);
-            file = new File("D:/Pruebas/ST/" + clase.getNombre() + ".java");
+            creardirectorio(clase.getPaquete());
+            file = new File("D:/Pruebas/ST/"+clase.getPaquete()+"/" + clase.getNombre() + ".java");
             FileWriter w = new FileWriter(file);
             BufferedWriter bw = new BufferedWriter(w);
             PrintWriter wr = new PrintWriter(bw);
@@ -33,6 +37,18 @@ public class GenerarCodigoRefactorizado {
   //        clase.add(file);
         }
 
+    }
+    
+    private void creardirectorio(String ruta){
+
+    	
+        File directorio = new File("D:/Pruebas/ST/"+ruta);
+        if (!directorio.exists()) {
+            if (directorio.mkdirs()) {
+            } else {
+            }
+        }
+        
     }
 
 }

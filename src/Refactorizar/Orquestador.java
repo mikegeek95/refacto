@@ -15,6 +15,7 @@ public class Orquestador {
     	  OclasesDerivadas rm2 = new OclasesDerivadas(); 
     	  ArrayList<Clase> listaC = new ArrayList<>();
     	  Refactorizar oR = new Refactorizar();
+
     	    
     	    
           oMArchivos.seleccionar_archivos();
@@ -23,6 +24,7 @@ public class Orquestador {
           listaC= rm2.obtenerClasesDerivadas(listaC);
           listaC = oR.refactorizar(listaC);
           gCodigoR.generarCodigo(listaC);
+          
     }
     
   
